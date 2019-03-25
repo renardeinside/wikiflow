@@ -18,18 +18,6 @@ services:
     volumes:
       - ~/.ivy2:/root/.ivy2
       - ~/.sbt:/root/.sbt  
-  # consumer-dev:
-  #   depends_on:
-  #     - kafka
-  #     - producer
-  #     - postgres
-  #   build:
-  #     context: ./consumer
-  #   volumes:
-  #     - ~/.ivy2:/root/.ivy2
-  #     - ~/.sbt:/root/.sbt  
-  #   # for the dev sake
-  #   entrypoint: tail -f /dev/null
   kafka:
     image: spotify/kafka
   postgres:
