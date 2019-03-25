@@ -1,0 +1,51 @@
+version: '3.2'
+services:
+  producer:
+    depends_on:
+      - kafka
+    build:
+      context: ./producer
+    volumes:
+      - ~/.ivy2:/root/.ivy2
+      - ~/.sbt:/root/.sbt
+  consumer:
+    depends_on:
+      - kafka
+      - producer
+      - postgres
+    build:
+      context: ./consumer
+    volumes:
+      - ~/.ivy2:/root/.ivy2
+      - ~/.sbt:/root/.sbt  
+  # consumer-dev:
+  #   depends_on:
+  #     - kafka
+  #     - producer
+  #     - postgres
+  #   build:
+  #     context: ./consumer
+  #   volumes:
+  #     - ~/.ivy2:/root/.ivy2
+  #     - ~/.sbt:/root/.sbt  
+  #   # for the dev sake
+  #   entrypoint: tail -f /dev/null
+  kafka:
+    image: spotify/kafka
+  postgres:
+    image: postgres
+    environment:
+        - POSTGRES_USER=consumer
+        - POSTGRES_DB=consumer
+        - POSTGRES_PASSWORD=goto@Postgres1
+    ports:
+      - "5432:5432"
+  superset:
+    image: tylerfowler/superset
+    depends_on:
+      - consumer
+      - postgres
+    ports:
+      - "8088:8088"
+    volumes:
+      - ~/projects/superset_cache:/superset
