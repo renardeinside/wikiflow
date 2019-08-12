@@ -45,6 +45,11 @@ RUN \
   echo "export PATH=~/scala-$SCALA_VERSION/bin:$PATH" >> /root/.bashrc
 
 
+RUN cd /usr/local/spark/jars && wget http://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-10-assembly_2.11/2.4.0/spark-streaming-kafka-0-10-assembly_2.11-2.4.0.jar
+RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/org/apache/kafka/kafka-clients/2.0.0/kafka-clients-2.0.0.jar
+RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/org/apache/spark/spark-tags_2.11/2.4.0/spark-tags_2.11-2.4.0.jar
+RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.0/spark-sql-kafka-0-10_2.11-2.4.0.jar
+RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar
 
 COPY ./target /usr/bin/app
 WORKDIR /usr/bin/app
@@ -52,5 +57,4 @@ WORKDIR /usr/bin/app
 ENTRYPOINT /usr/local/spark/bin/spark-submit \
 		--class "com.renarde.wikiflow.consumer.StructuredConsumer" \
 		--master "local[2]" \
-		--packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.0 \
 		consumer-1.0-SNAPSHOT-jar-with-dependencies.jar

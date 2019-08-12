@@ -2,8 +2,8 @@ package com.renarde.wikiflow.consumer
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.from_json
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.functions.{from_json, lit, current_timestamp}
 
 object StructuredConsumer extends App with LazyLogging {
   val appName: String = "structured-consumer-example"
@@ -15,6 +15,7 @@ object StructuredConsumer extends App with LazyLogging {
     .getOrCreate()
 
   import spark.implicits._
+
   logger.info("Initializing Structured consumer")
 
   spark.sparkContext.setLogLevel("WARN")
@@ -22,11 +23,14 @@ object StructuredConsumer extends App with LazyLogging {
   val inputStream = spark.readStream
     .format("kafka")
     .option("kafka.bootstrap.servers", "kafka:9092")
-    .option("subscribe", "consumer")
+    .option("subscribe", "wikiflow-topic")
+    .option("startingOffsets", "earliest")
     .load()
 
-  val rawData = inputStream.selectExpr("CAST(value) as STRING")
 
+  val preparedDS = inputStream.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)").as[(String, String)]
+
+  val rawData = preparedDS.filter($"value".isNotNull)
 
   val expectedSchema = new StructType()
     .add(StructField("bot", BooleanType))
@@ -46,17 +50,34 @@ object StructuredConsumer extends App with LazyLogging {
       .add(StructField("stream", StringType))
       .add(StructField("topic", StringType))
       .add(StructField("uri", StringType))
-      .add(StructField("wiki", StringType))
     )
+    .add("minor", BooleanType)
+    .add("namespace", LongType)
+    .add("parsedcomment", StringType)
+    .add("patrolled", BooleanType)
+    .add("revision", new StructType()
+      .add("new", LongType)
+      .add("old", LongType)
+    )
+    .add("server_name", StringType)
+    .add("server_script_path", StringType)
+    .add("server_url", StringType)
+    .add("timestamp", LongType)
+    .add("title", StringType)
+    .add("type", StringType)
+    .add("user", StringType)
+    .add("wiki", StringType)
 
-  val parsedData = rawData.select(from_json($"value",expectedSchema)).withColumn("occured_at",lit(current_timestamp()))
+  val parsedData = rawData.select(from_json($"value", expectedSchema).as("data")).select("data.*")
 
   val consoleOutput = parsedData.writeStream
     .outputMode("append")
     .format("console")
     .start()
 
-  consoleOutput.awaitTermination()
+
+  spark.streams.awaitAnyTermination()
 
 }
+
 
