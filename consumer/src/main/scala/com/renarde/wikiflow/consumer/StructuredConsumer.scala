@@ -11,7 +11,6 @@ object StructuredConsumer extends App with LazyLogging {
   val spark: SparkSession = SparkSession.builder()
     .appName(appName)
     .config("spark.driver.memory", "5g")
-    .config("spark.jars.packages","org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.0")
     .master("local[2]")
     .getOrCreate()
 
