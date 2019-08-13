@@ -1,0 +1,18 @@
+version: "3"
+services:
+  analytics-consumer:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile-analytics
+    networks:
+      - wikiflow-network
+    ports:
+      - "4040:4040"
+    volumes:
+      - delta:/storage
+networks:
+  wikiflow-network:
+    external:
+      name: wikiflow-network
+volumes:
+  delta:

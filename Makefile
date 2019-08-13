@@ -14,3 +14,8 @@ run-legacy-consumer:
 	mvn clean package -pl consumer
 	docker-compose -f docker-compose-legacy-consumer.yaml build
 	docker-compose -f docker-compose-legacy-consumer.yaml up
+
+run-analytics-consumer:
+	mvn clean package -pl consumer
+	docker-compose -f docker-compose-analytics-consumer.yaml build
+	docker-compose -f docker-compose-analytics-consumer.yaml up

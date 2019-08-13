@@ -32,17 +32,21 @@ RUN ln -s $SPARK_DIR $SPARK_HOME && \
     ln -s /usr/bin/pip3 /usr/bin/pip && \
     ln -s /usr/bin/python3 /usr/bin/python
 
+# Env variables
+
+RUN apt-get update && apt-get install -y \
+curl wget
+
 
 RUN cd /usr/local/spark/jars && wget http://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-10-assembly_2.11/2.4.3/spark-streaming-kafka-0-10-assembly_2.11-2.4.3.jar
 RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/org/apache/kafka/kafka-clients/2.0.0/kafka-clients-2.0.0.jar
 RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/org/apache/spark/spark-tags_2.11/2.4.3/spark-tags_2.11-2.4.3.jar
 RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.3/spark-sql-kafka-0-10_2.11-2.4.3.jar
-RUN cd /usr/local/spark/jars && wget http://central.maven.org/maven2/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar
-
+RUN cd /usr/local/spark/jars && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.11/0.3.0/delta-core_2.11-0.3.0.jar
 COPY ./target /usr/bin/app
 WORKDIR /usr/bin/app
 
 ENTRYPOINT /usr/local/spark/bin/spark-submit \
-		--class "com.renarde.wikiflow.consumer.StructuredConsumer" \
+		--class "com.renarde.wikiflow.consumer.AnalyticsConsumer" \
 		--master "local[2]" \
 		consumer-1.0-SNAPSHOT-jar-with-dependencies.jar

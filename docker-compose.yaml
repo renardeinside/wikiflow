@@ -5,31 +5,12 @@ services:
       - kafka
     build:
       context: ./transporter
-    volumes:
-      - ~/.ivy2:/root/.ivy2
-      - ~/.sbt:/root/.sbt
     networks:
       - wikiflow-network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 400M
-        reservations:
-          cpus: '0.5'
-          memory: 400M
   kafka:
     image: spotify/kafka
     networks:
       - wikiflow-network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 200M
-        reservations:
-          cpus: '0.3'
-          memory: 200M
   postgres:
     image: postgres
     environment:
@@ -40,15 +21,10 @@ services:
       - "5432:5432"
     networks:
       - wikiflow-network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 200M
-        reservations:
-          cpus: '0.3'
-          memory: 200M
 networks:
   wikiflow-network:
     external:
       name: wikiflow-network
+
+volumes:
+  delta:
