@@ -32,7 +32,11 @@ You could also access the SparkUI for this Job at http://localhost:4040/jobs
 ## Known issues
 
 - Sometimes you need to increase docker memory limit for your machine (for Mac it's 2.0GB by default).
-- To debug memory usage of the containers, please use this command:
+- To debug memory usage and status of the containers, please use this command:
 ```bash
 docker stats
+```
+- Sometimes docker couldn't gracefully stop the consuming applications, please use this command in case if container hangs:
+```bash
+docker-compose -f <name of compose file with the job>.yaml down
 ```
