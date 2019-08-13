@@ -20,6 +20,19 @@ make run-legacy-consumer
 make run-structured-consumer
 ```
 
+- To run streaming consumption of data via structured API with write to delta, please run:
+```bash
+make run-analytics-consumer
+```
+
+You could also access the SparkUI for this Job at http://localhost:4040/jobs
+
+
+
 ## Known issues
 
 - Sometimes you need to increase docker memory limit for your machine (for Mac it's 2.0GB by default).
+- To debug memory usage of the containers, please use this command:
+```bash
+docker stats
+```
